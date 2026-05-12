@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import Navbar from '../components/Navbar'
-import { FiCalendar, FiClipboard, FiBookOpen, FiTrendingUp, FiClock, FiMapPin, FiX, FiSave } from 'react-icons/fi'
+import { FiCalendar, FiClipboard, FiBookOpen, FiTrendingUp, FiClock, FiMapPin, FiX, FiSave, FiEdit3 } from 'react-icons/fi'
 
 const API = 'http://localhost:8000'
 
@@ -88,7 +88,9 @@ export default function Dashboard() {
             }`}
           >
             {card.editable && (
-              <span className="absolute top-2 right-2 text-[10px] text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-wider">Edit</span>
+              <span className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-purple-50 text-purple-400 group-hover:bg-purple-100 group-hover:text-purple-600 transition-all duration-200 group-hover:scale-110">
+                <FiEdit3 size={13} />
+              </span>
             )}
             <div className="flex items-center justify-between mb-3">
               <div className={`p-2.5 rounded-xl ${card.bg} group-hover:scale-110 transition-transform duration-300`}>
