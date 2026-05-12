@@ -11,7 +11,7 @@ def store_embeddings(chunks: list, file_id: str):
     collection_name = file_id.replace("-", "_")
     try:
         collection = client.get_collection(name=collection_name)
-    except ValueError:
+    except Exception:
         collection = client.create_collection(name=collection_name)
 
     ids = [str(uuid.uuid4()) for _ in chunks]
@@ -31,7 +31,7 @@ def retrieve_context(question: str, file_id: str, top_k: int = 5) -> str:
     collection_name = file_id.replace("-", "_")
     try:
         collection = client.get_collection(name=collection_name)
-    except ValueError:
+    except Exception:
         return ""
 
     q_embedding = embedder.encode([question], show_progress_bar=False).tolist()

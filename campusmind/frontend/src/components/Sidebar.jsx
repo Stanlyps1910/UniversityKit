@@ -1,5 +1,9 @@
+import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { FiGrid, FiCalendar, FiClipboard, FiFileText, FiCheckCircle, FiMessageSquare } from 'react-icons/fi'
+import axios from 'axios'
+
+const API = 'http://localhost:8000'
 
 const links = [
   { to: '/', label: 'Dashboard', icon: FiGrid },
@@ -11,6 +15,14 @@ const links = [
 ]
 
 export default function Sidebar() {
+  const [course, setCourse] = useState('BCA')
+
+  useEffect(() => {
+    axios.get(`${API}/semester/settings`).then((res) => {
+      if (res.data.course) setCourse(res.data.course)
+    }).catch(() => {})
+  }, [])
+
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-100 p-4 flex flex-col z-10">
       <div className="mb-8 px-3 pt-2">
@@ -53,7 +65,7 @@ export default function Sidebar() {
         ))}
       </nav>
       <div className="text-[10px] text-gray-300 px-3 pt-4 border-t border-gray-50 tracking-wide">
-        v1.0 &middot; BCA Edition
+        v1.0 &middot; {course} Edition
       </div>
     </aside>
   )

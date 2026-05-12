@@ -33,14 +33,15 @@ def get_remaining(subject: str, db: Session = Depends(get_db)):
         return {"remaining": 0, "subject": subject}
 
     days_of_week = set(e.day for e in entries)
-    today = date.today()
+    # Start from tomorrow to avoid double-counting today's classes
+    tomorrow = date.today() + timedelta(days=1)
     end = settings.end_date
 
-    if today > end:
+    if tomorrow > end:
         return {"remaining": 0, "subject": subject}
 
     remaining = 0
-    current = today
+    current = tomorrow
     while current <= end:
         day_name = current.strftime("%A")
         if day_name in days_of_week:
@@ -56,27 +57,35 @@ def calculate_attendance(req: AttendanceRequest):
         return {"error": "Total classes must be greater than 0"}
     if req.attended > req.total_classes:
         return {"error": "Attended cannot exceed total classes"}
+    if req.attended < 0:
+        return {"error": "Attended classes cannot be negative"}
 
     current_pct = round((req.attended / req.total_classes) * 100, 2)
     total_remaining = req.remaining_classes
     future_total = req.total_classes + total_remaining
 
+    # Calculate how many of the remaining classes you must attend to reach target
     needed_to_reach_target = 0
-    for i in range(total_remaining + 1):
-        future_pct = (req.attended + i) / future_total * 100
-        if future_pct >= req.target_percentage:
-            needed_to_reach_target = i
-            break
-    else:
-        needed_to_reach_target = total_remaining + 1
-
-    can_skip = 0
-    for i in range(total_remaining + 1):
-        future_pct = (req.attended + total_remaining - i) / future_total * 100
-        if future_pct >= req.target_percentage:
-            can_skip = i
+    if future_total > 0:
+        for i in range(total_remaining + 1):
+            future_pct = (req.attended + i) / future_total * 100
+            if future_pct >= req.target_percentage:
+                needed_to_reach_target = i
+                break
         else:
-            break
+            needed_to_reach_target = total_remaining + 1
+
+    # Calculate max classes you can skip while still meeting target
+    # (attend all remaining minus i, check if still >= target)
+    can_skip = 0
+    if future_total > 0:
+        for i in range(total_remaining + 1):
+            attended_if_skip_i = req.attended + (total_remaining - i)
+            future_pct = attended_if_skip_i / future_total * 100
+            if future_pct >= req.target_percentage:
+                can_skip = i
+            else:
+                break
 
     if current_pct >= req.target_percentage:
         risk = "safe"
@@ -92,3 +101,4 @@ def calculate_attendance(req: AttendanceRequest):
         "classes_you_can_skip": can_skip,
         "risk_level": risk,
     }
+

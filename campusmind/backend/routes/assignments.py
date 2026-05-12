@@ -17,10 +17,14 @@ class AssignmentCreate(BaseModel):
 
 @router.post("/add")
 def add_assignment(assignment: AssignmentCreate, db: Session = Depends(get_db)):
+    try:
+        parsed_deadline = date.fromisoformat(assignment.deadline)
+    except (ValueError, TypeError):
+        raise HTTPException(status_code=400, detail="Invalid deadline date format. Use YYYY-MM-DD.")
     db_entry = Assignment(
         title=assignment.title,
         subject=assignment.subject,
-        deadline=date.fromisoformat(assignment.deadline),
+        deadline=parsed_deadline,
         priority=assignment.priority.lower(),
     )
     db.add(db_entry)

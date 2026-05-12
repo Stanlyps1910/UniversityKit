@@ -58,11 +58,16 @@ def parse_text(req: TimetableText, db: Session = Depends(get_db)):
 
 @router.post("/add")
 def add_entry(entry: TimetableCreate, db: Session = Depends(get_db)):
+    try:
+        parsed_start = time.fromisoformat(entry.start_time)
+        parsed_end = time.fromisoformat(entry.end_time)
+    except (ValueError, TypeError):
+        raise HTTPException(status_code=400, detail="Invalid time format. Use HH:MM.")
     db_entry = TimetableEntry(
         subject=entry.subject,
         day=entry.day.capitalize(),
-        start_time=time.fromisoformat(entry.start_time),
-        end_time=time.fromisoformat(entry.end_time),
+        start_time=parsed_start,
+        end_time=parsed_end,
         faculty=entry.faculty,
         room=entry.room,
     )

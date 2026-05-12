@@ -31,6 +31,7 @@ class SemesterSettings(Base):
     __tablename__ = "semester_settings"
 
     id = Column(Integer, primary_key=True, index=True)
+    course = Column(String, nullable=False, default="BCA")
     semester = Column(Integer, nullable=False, default=1)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)

@@ -20,9 +20,9 @@ export default function Dashboard() {
   const [todayClasses, setTodayClasses] = useState([])
   const [pendingCount, setPendingCount] = useState(0)
   const [subjectsCount, setSubjectsCount] = useState(0)
-  const [semester, setSemester] = useState({ semester: 1, start_date: '', end_date: '' })
+  const [semester, setSemester] = useState({ course: 'BCA', semester: 1, start_date: '', end_date: '' })
   const [semesterModal, setSemesterModal] = useState(false)
-  const [editSem, setEditSem] = useState({ semester: 1, start_date: '', end_date: '' })
+  const [editSem, setEditSem] = useState({ course: 'BCA', semester: 1, start_date: '', end_date: '' })
   const [savingSem, setSavingSem] = useState(false)
   const [quote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)])
   const [loading, setLoading] = useState(true)
@@ -72,7 +72,7 @@ export default function Dashboard() {
     { label: "Today's Classes", value: todayClasses.length, icon: FiCalendar, gradient: 'from-rose-500 to-pink-500', bg: 'bg-rose-50' },
     { label: 'Pending Assignments', value: pendingCount, icon: FiClipboard, gradient: 'from-orange-500 to-pink-500', bg: 'bg-orange-50' },
     { label: 'Subjects', value: subjectsCount, icon: FiBookOpen, gradient: 'from-green-500 to-emerald-500', bg: 'bg-green-50' },
-    { label: `Semester ${semester.semester}`, value: `${semester.semester}`, icon: FiTrendingUp, gradient: 'from-purple-500 to-violet-500', bg: 'bg-purple-50', editable: true },
+    { label: `${semester.course || 'BCA'} Sem ${semester.semester}`, value: `${semester.semester}`, icon: FiTrendingUp, gradient: 'from-purple-500 to-violet-500', bg: 'bg-purple-50', editable: true },
   ]
 
   return (
@@ -177,6 +177,11 @@ export default function Dashboard() {
               </button>
             </div>
             <div className="space-y-4">
+              <div>
+                <label className="text-[11px] text-gray-400 font-medium uppercase tracking-wider block mb-1.5">Course</label>
+                <input type="text" value={editSem.course} onChange={(e) => setEditSem({ ...editSem, course: e.target.value })}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-50 transition-all" placeholder="e.g. BCA, B.Tech, BBA" />
+              </div>
               <div>
                 <label className="text-[11px] text-gray-400 font-medium uppercase tracking-wider block mb-1.5">Semester</label>
                 <input type="number" min="1" max="8" value={editSem.semester} onChange={(e) => setEditSem({ ...editSem, semester: Number(e.target.value) })}
