@@ -11,7 +11,7 @@ const titles = {
 
 export default function Navbar() {
   const location = useLocation()
-  const title = titles[location.pathname] || 'CampusMind'
+  const title = titles[location.pathname] || 'University Kit'
 
   return (
     <header className="mb-7 pb-4 border-b border-gray-100">

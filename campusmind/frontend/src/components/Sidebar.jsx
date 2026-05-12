@@ -16,10 +16,10 @@ export default function Sidebar() {
       <div className="mb-8 px-3 pt-2">
         <div className="flex items-center gap-3 mb-1">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white text-sm font-bold shadow-md shadow-rose-200">
-            C
+            U
           </div>
           <div>
-            <h1 className="text-lg font-bold text-gray-800">CampusMind</h1>
+            <h1 className="text-lg font-bold text-gray-800">University Kit</h1>
             <p className="text-[10px] text-gray-400 tracking-wide uppercase">Smart Assistant</p>
           </div>
         </div>

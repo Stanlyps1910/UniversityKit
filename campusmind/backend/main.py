@@ -10,7 +10,7 @@ from routes.semester import router as semester_router
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="CampusMind AI", version="1.0.0")
+app = FastAPI(title="University Kit", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,4 +30,4 @@ app.include_router(semester_router)
 
 @app.get("/")
 def root():
-    return {"message": "CampusMind AI API is running"}
+    return {"message": "University Kit API is running"}

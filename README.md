@@ -1,8 +1,8 @@
-# CampusMind AI 🎓🤖
+# University Kit 🎓🤖
 
-**CampusMind AI** is a premium, AI-powered university assistant designed to streamline your academic life. Built with a modern tech stack, it provides students with a powerful dashboard to manage classes, assignments, attendance, and study materials with the help of artificial intelligence.
+**University Kit** is a premium, AI-powered university assistant designed to streamline your academic life. Built with a modern tech stack, it provides students with a powerful dashboard to manage classes, assignments, attendance, and study materials with the help of artificial intelligence.
 
-![CampusMind Banner](https://images.unsplash.com/photo-1523050335456-c38730b0ebf4?auto=format&fit=crop&q=80&w=2000)
+![University Kit Banner](https://images.unsplash.com/photo-1523050335456-c38730b0ebf4?auto=format&fit=crop&q=80&w=2000)
 
 ## ✨ Features
 
@@ -13,7 +13,7 @@
 
 ### 📅 Smart Timetable
 - **Manual Add**: Quickly add classes to your schedule.
-- **PDF Upload**: Upload your university timetable PDF, and CampusMind will automatically extract and populate your schedule.
+- **PDF Upload**: Upload your university timetable PDF, and University Kit will automatically extract and populate your schedule.
 - **Text Parse**: Paste your timetable text for instant parsing.
 
 ### 📝 AI Notes & Viva Generator
@@ -78,7 +78,7 @@
    ```
 
 ## 🎨 UI & Design
-CampusMind AI features a custom-designed **Premium Light Theme** optimized for long study sessions. It uses a soft color palette (`Rose`, `Pink`, and `Slate`) to ensure maximum readability and a stunning visual experience.
+University Kit features a custom-designed **Premium Light Theme** optimized for long study sessions. It uses a soft color palette (`Rose`, `Pink`, and `Slate`) to ensure maximum readability and a stunning visual experience.
 
 ---
 *Created with ❤️ for students who want to master their university life.*
