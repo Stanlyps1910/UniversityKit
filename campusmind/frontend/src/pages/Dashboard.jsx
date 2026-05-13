@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import toast from 'react-hot-toast'
 import Navbar from '../components/Navbar'
 import { FiCalendar, FiClipboard, FiBookOpen, FiTrendingUp, FiClock, FiMapPin, FiX, FiSave, FiEdit3 } from 'react-icons/fi'
-
-const API = 'http://localhost:8000'
+import { storage } from '../utils/storage'
 
 const quotes = [
   'Success is the sum of small efforts repeated day in and day out.',
@@ -12,7 +10,7 @@ const quotes = [
   'Push yourself, because no one else is going to do it for you.',
   'Your education is a dress rehearsal for a life that is yours to lead.',
   'It always seems impossible until it is done.',
-  'BCA is not just a degree \u2014 it is a mindset.',
+  'BCA is not just a degree — it is a mindset.',
   'Code today, conquer tomorrow.',
 ]
 
@@ -28,20 +26,27 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = () => {
       try {
-        const [classesRes, assignmentsRes, semRes, subjectsRes] = await Promise.all([
-          axios.get(`${API}/timetable/today`),
-          axios.get(`${API}/assignments/pending`),
-          axios.get(`${API}/semester/settings`),
-          axios.get(`${API}/attendance/subjects`),
-        ])
-        setTodayClasses(classesRes.data)
-        setPendingCount(assignmentsRes.data.length)
-        setSemester(semRes.data)
-        setSubjectsCount(subjectsRes.data.length)
-      } catch {
-        setTodayClasses([])
+        const timetable = storage.getTimetable()
+        const assignments = storage.getAssignments()
+        const semSettings = storage.getSemester()
+
+        // Get today's name (Monday, Tuesday, etc.)
+        const dayMap = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        const todayName = dayMap[new Date().getDay()]
+        
+        const today = timetable.filter(entry => entry.day === todayName)
+        const pending = assignments.filter(a => !a.is_completed)
+        const subjects = [...new Set(timetable.map(e => e.subject))]
+
+        setTodayClasses(today)
+        setPendingCount(pending.length)
+        setSemester(semSettings)
+        setSubjectsCount(subjects.length)
+      } catch (err) {
+        console.error('Offline load error:', err)
+        toast.error('Failed to load local data')
       }
       setLoading(false)
     }
@@ -58,9 +63,9 @@ export default function Dashboard() {
     if (editSem.semester < 1) return toast.error('Invalid semester number')
     setSavingSem(true)
     try {
-      await axios.put(`${API}/semester/settings`, editSem)
+      storage.saveSemester(editSem)
       setSemester({ ...editSem })
-      toast.success('Semester updated')
+      toast.success('Semester updated locally')
       setSemesterModal(false)
     } catch {
       toast.error('Failed to save')

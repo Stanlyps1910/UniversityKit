@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import toast from 'react-hot-toast'
 import Navbar from '../components/Navbar'
 import { FiTrash2, FiCheck, FiPlus, FiCalendar } from 'react-icons/fi'
-
-const API = 'http://localhost:8000'
+import { storage } from '../utils/storage'
 
 const priorityConfig = {
   high: { label: 'High', ring: 'ring-red-200', badge: 'text-red-700 bg-red-50 border-red-200', dot: 'bg-red-500' },
@@ -19,42 +17,39 @@ export default function Assignments() {
 
   useEffect(() => { fetchAll() }, [])
 
-  const fetchAll = async () => {
+  const fetchAll = () => {
     try {
-      const [pRes, cRes] = await Promise.all([
-        axios.get(`${API}/assignments/pending`),
-        axios.get(`${API}/assignments/completed`),
-      ])
-      setPending(pRes.data)
-      setCompleted(cRes.data)
+      const all = storage.getAssignments()
+      setPending(all.filter(a => !a.is_completed).sort((a, b) => new Date(a.deadline) - new Date(b.deadline)))
+      setCompleted(all.filter(a => a.is_completed).sort((a, b) => new Date(b.deadline) - new Date(a.deadline)))
     } catch {
       setPending([])
       setCompleted([])
     }
   }
 
-  const handleAdd = async (e) => {
+  const handleAdd = (e) => {
     e.preventDefault()
     if (!form.title || !form.subject || !form.deadline) return toast.error('Please fill in all fields')
     try {
-      await axios.post(`${API}/assignments/add`, form)
+      storage.addAssignment(form)
       toast.success('Assignment added')
       fetchAll()
       setForm({ title: '', subject: '', deadline: '', priority: 'medium' })
     } catch { toast.error('Failed to add assignment') }
   }
 
-  const handleComplete = async (id) => {
+  const handleComplete = (id) => {
     try {
-      await axios.patch(`${API}/assignments/${id}/complete`)
+      storage.updateAssignment(id, { is_completed: true })
       toast.success('Marked as completed')
       fetchAll()
     } catch { toast.error('Failed to update') }
   }
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     try {
-      await axios.delete(`${API}/assignments/${id}`)
+      storage.deleteAssignment(id)
       toast.success('Assignment deleted')
       fetchAll()
     } catch { toast.error('Failed to delete') }

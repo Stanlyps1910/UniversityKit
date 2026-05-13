@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import toast from 'react-hot-toast'
 import Navbar from '../components/Navbar'
 import { FiAlertCircle, FiCheckCircle, FiInfo, FiTarget, FiSkipForward, FiPercent } from 'react-icons/fi'
-
-const API = 'http://localhost:8000'
+import { storage } from '../utils/storage'
+import { calculateRemainingClasses, calculateAttendanceStats } from '../utils/attendance'
 
 const riskConfig = {
   safe: {
@@ -27,32 +26,31 @@ export default function Attendance() {
   const [result, setResult] = useState(null)
 
   useEffect(() => {
-    axios.get(`${API}/attendance/subjects`).then((res) => setSubjects(res.data)).catch(() => {})
+    const timetable = storage.getTimetable()
+    const subs = [...new Set(timetable.map(e => e.subject))].sort()
+    setSubjects(subs)
   }, [])
 
-  const handleSubjectChange = async (subject) => {
-    setForm((prev) => ({ ...prev, subject }))
-    if (!subject) return
-    try {
-      const res = await axios.get(`${API}/attendance/remaining/${encodeURIComponent(subject)}`)
-      setForm((prev) => ({ ...prev, remaining_classes: res.data.remaining }))
-    } catch {}
+  const handleSubjectChange = (subject) => {
+    const remaining = calculateRemainingClasses(subject)
+    setForm((prev) => ({ ...prev, subject, remaining_classes: remaining }))
   }
 
-  const handleCalculate = async (e) => {
+  const handleCalculate = (e) => {
     e.preventDefault()
     if (!form.total_classes || form.attended === '' || !form.remaining_classes) return toast.error('Please fill in all fields')
-    try {
-      const res = await axios.post(`${API}/attendance/calculate`, {
-        subject: form.subject,
-        total_classes: Number(form.total_classes),
-        attended: Number(form.attended),
-        remaining_classes: Number(form.remaining_classes),
-        target_percentage: Number(form.target_percentage),
-      })
-      setResult(res.data)
-    } catch {
-      toast.error('Calculation failed')
+    
+    const stats = calculateAttendanceStats({
+      total_classes: Number(form.total_classes),
+      attended: Number(form.attended),
+      remaining_classes: Number(form.remaining_classes),
+      target_percentage: Number(form.target_percentage),
+    })
+
+    if (stats.error) {
+      toast.error(stats.error)
+    } else {
+      setResult(stats)
     }
   }
 

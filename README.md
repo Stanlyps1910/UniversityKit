@@ -60,7 +60,7 @@
    ```
 4. Run the server:
    ```bash
-   python main.py
+   uvicorn main:app --reload
    ```
 
 ### Frontend
